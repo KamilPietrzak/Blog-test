@@ -1,0 +1,49 @@
+name: Build Hugo and Gemini
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Build Hugo site
+        run: hugo --minify
+
+      - name: Build Gemini version
+        run: python3 scripts/md2gemini.py
+
+      - name: Upload Hugo artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-site
+          path: public/
+
+      - name: Upload Gemini artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-site
+          path: public_gemini/
