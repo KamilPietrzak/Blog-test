@@ -1,4 +1,4 @@
-module github.com/chrede88/qubtTemplate
+module github.com/KamilPietrzak/Blog-test
 
 go 1.25.4
 
